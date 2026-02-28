@@ -1,38 +1,31 @@
-// Services.jsx — Lists the three core services with numbered rows and hover interactions.
+// Services.jsx — "Our Expertise" section using the FlowingMenu component from React Bits.
+
+import FlowingMenu from './FlowingMenu'
+
+const expertiseItems = [
+    { link: '#', text: 'Business Websites', image: '/images/business-websites.jpg' },
+    { link: '#', text: 'Landing Pages & Portfolios', image: '/images/landing-pages.png' },
+    { link: '#', text: 'Maintenance & Support', image: '/images/maintenance-support.png' },
+]
 
 function Services() {
-    const services = [
-        { number: '01', title: 'Business Websites' },
-        { number: '02', title: 'Landing Pages & Portfolios' },
-        { number: '03', title: 'Maintenance & Support' },
-    ]
-
     return (
         <section className="py-32 border-b border-white/[0.05]">
             <div className="mb-20">
-                <h2 className="font-mono text-xs uppercase tracking-widest text-white/40">Our Expertise</h2>
+                <h2 className="font-mono text-2xl md:text-4xl uppercase tracking-widest text-white/40">Our Expertise</h2>
             </div>
 
-            <ul className="flex flex-col">
-                {services.map((service) => (
-                    <li
-                        key={service.number}
-                        className="group flex flex-col md:flex-row md:items-center py-10 md:py-16 border-t border-white/[0.05] hover:bg-white/[0.01] transition-colors cursor-default"
-                    >
-                        <div className="w-full md:w-32 mb-4 md:mb-0 font-mono text-lg text-white/20 group-hover:text-white/40 transition-colors">
-                            {service.number}
-                        </div>
-                        <div className="flex-1">
-                            <h3 className="text-3xl md:text-5xl font-medium tracking-tight text-main group-hover:translate-x-2 md:group-hover:translate-x-6 transition-transform duration-500 ease-out">
-                                {service.title}
-                            </h3>
-                        </div>
-                        <div className="hidden md:block text-2xl text-white/10 group-hover:text-white/80 transition-colors font-light">
-                            →
-                        </div>
-                    </li>
-                ))}
-            </ul>
+            <div style={{ height: '600px', position: 'relative' }}>
+                <FlowingMenu
+                    items={expertiseItems}
+                    speed={15}
+                    textColor="#F0F0F0"
+                    bgColor="#0A0A0F"
+                    marqueeBgColor="#F0F0F0"
+                    marqueeTextColor="#0A0A0F"
+                    borderColor="rgba(255,255,255,0.1)"
+                />
+            </div>
         </section>
     )
 }

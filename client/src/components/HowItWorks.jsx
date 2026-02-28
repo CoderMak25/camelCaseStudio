@@ -1,38 +1,58 @@
-// HowItWorks.jsx — Three-step process section: We Talk, We Build, You Launch.
+// HowItWorks.jsx — "Our Workflow" section with SplitText heading and MagicBento cards.
+
+import SplitText from './SplitText'
+import MagicBento from './MagicBento'
+
+const steps = [
+    {
+        number: '01',
+        title: 'We Talk',
+        description: 'Strategy, alignment, and understanding your core business objectives before a single line of code is written.',
+    },
+    {
+        number: '02',
+        title: 'We Build',
+        description: 'Iterative design and clean architecture. You receive regular updates as we construct the digital experience.',
+    },
+    {
+        number: '03',
+        title: 'You Launch',
+        description: 'Deployment, optimization, and hand-off. We ensure everything runs perfectly in production environments.',
+    },
+]
 
 function HowItWorks() {
-    const steps = [
-        {
-            number: '01',
-            title: 'We Talk',
-            description: 'Strategy, alignment, and understanding your core business objectives before a single line of code is written.',
-        },
-        {
-            number: '02',
-            title: 'We Build',
-            description: 'Iterative design and clean architecture. You receive regular updates as we construct the digital experience.',
-        },
-        {
-            number: '03',
-            title: 'You Launch',
-            description: 'Deployment, optimization, and hand-off. We ensure everything runs perfectly in production environments.',
-        },
-    ]
-
     return (
         <section className="py-32 border-b border-white/[0.05]">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-16 md:gap-8">
-                {steps.map((step) => (
-                    <div key={step.number} className="flex flex-col border-l border-white/[0.05] pl-8 relative">
-                        <span className="absolute top-0 left-[-1px] w-px h-12 bg-white/40"></span>
-                        <div className="text-[5rem] md:text-[7rem] font-light leading-none text-white/[0.03] font-mono mb-4 tracking-tighter">
-                            {step.number}
-                        </div>
-                        <h3 className="text-xl md:text-2xl font-medium tracking-tight text-main mb-3">{step.title}</h3>
-                        <p className="text-sm text-white/40 max-w-xs leading-relaxed">{step.description}</p>
-                    </div>
-                ))}
+            <div className="mb-20">
+                <SplitText
+                    text="Our Workflow"
+                    className="font-mono text-4xl md:text-6xl font-medium tracking-tight text-main"
+                    delay={30}
+                    duration={0.8}
+                    ease="power3.out"
+                    splitType="chars"
+                    from={{ opacity: 0, y: 40 }}
+                    to={{ opacity: 1, y: 0 }}
+                    threshold={0.1}
+                    rootMargin="-50px"
+                    textAlign="left"
+                    tag="h2"
+                />
             </div>
+
+            <MagicBento
+                cards={steps}
+                glowColor="58, 130, 246"
+                enableStars={true}
+                enableSpotlight={true}
+                enableBorderGlow={true}
+                enableTilt={false}
+                clickEffect={true}
+                enableMagnetism={true}
+                particleCount={8}
+                spotlightRadius={300}
+            />
         </section>
     )
 }
