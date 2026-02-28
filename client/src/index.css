@@ -1,0 +1,59 @@
+/* index.css — Global styles for the camelCase Studio React app.
+   Includes Tailwind CSS v4 import, custom theme, scrollbar, marquee animation, and typography smoothing. */
+
+@import "tailwindcss";
+
+/* Custom Theme */
+@theme {
+  --font-sans: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --color-base: #0A0A0F;
+  --color-main: #F0F0F0;
+  --color-accent: #3B82F6;
+}
+
+/* Selection colors */
+::selection {
+  background-color: #3B82F6;
+  color: white;
+}
+
+/* Custom scrollbar for a premium feel */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0A0A0F;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Marquee Animation */
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+  display: inline-flex;
+  width: max-content;
+}
+
+/* Subpixel Antialiasing for sharp text */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
