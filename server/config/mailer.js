@@ -1,64 +1,48 @@
-// mailer.js — Nodemailer configuration for Gmail + email helpers.
+// mailer.js — Email sending via Promailer HTTP API (Render‑friendly, no SMTP).
 //
-// To use this securely with Gmail:
-// 1. Turn on 2‑Step Verification on your Google account.
-// 2. In Google Account → Security → App passwords, create a new app password.
-// 3. Set these env vars:
-//    GMAIL_USER=camelcasestudio@gmail.com
-//    GMAIL_APP_PASSWORD=<the 16‑character app password>
+// Promailer docs: https://promailer.xyz (mailserver.automationlounge.com)
+//
+// Required env vars:
+//   API_MAIL_KEY   = your Promailer API key
+//   EMAIL_TO       = where you receive enquiries (e.g. camelcasestudio@gmail.com)
+// Optional:
+//   MAIL_API_URL   = override API endpoint (default below)
+//   EMAIL_FROM     = custom "from" address (defaults to SMTP-configured sender in Promailer)
 
-const nodemailer = require('nodemailer');
+const axios = require('axios');
 
-const gmailUser = process.env.GMAIL_USER;
-const gmailPass = process.env.GMAIL_APP_PASSWORD;
+const PROMAILER_API_URL =
+    process.env.MAIL_API_URL ||
+    'https://mailserver.automationlounge.com/api/v1/messages/send';
 
-let emailReady = Boolean(gmailUser && gmailPass);
-let transporter = null;
+const apiKey = process.env.API_MAIL_KEY;
+const studioAddress = process.env.EMAIL_TO || process.env.EMAIL_USER;
+const fromAddress = process.env.EMAIL_FROM || undefined;
 
-if (emailReady) {
-    transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: gmailUser,
-            pass: gmailPass,
-        },
-    });
+const emailReady = Boolean(apiKey && studioAddress);
 
-    transporter.verify((error) => {
-        if (error) {
-            console.warn('⚠️  Gmail not configured:', error.message);
-            console.warn(
-                "   Form submissions will save to MongoDB but emails won't be sent."
-            );
-            emailReady = false;
-        } else {
-            console.log('✅ Gmail transporter ready');
-        }
-    });
-} else {
+if (!emailReady) {
     console.warn(
-        '⚠️  GMAIL_USER or GMAIL_APP_PASSWORD missing. Emails will not be sent.'
+        '⚠️  Promailer email not fully configured. Contacts will save, but emails may not be sent.'
     );
 }
 
 /**
  * Sends a single internal email to the studio inbox with the enquiry details.
- * (From = To = studio address; client does not receive an email.)
+ * (To = studioAddress; client does not receive an email.)
  * This function MUST NOT throw — caller handles its own try/catch.
  * @param {Object} data - { name, email, projectType, message }
  */
 const sendContactEmail = async ({ name, email, projectType, message }) => {
-    if (!emailReady || !transporter) {
+    if (!emailReady) {
         console.warn(
-            '⚠️  Email not configured. Contact saved to DB but emails were not sent.'
+            '⚠️  Promailer not configured. Contact saved to DB but email was not sent.'
         );
         return;
     }
 
-    const studioAddress = process.env.GMAIL_TO || gmailUser;
     const timestamp = new Date().toISOString();
 
-    // Single email — internal notification to studio (studio mails to itself)
     const internalHtml = `
   <div style="background:#080810;color:#F9FAFB;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:32px;max-width:640px;margin:0 auto;">
     <h1 style="margin:0 0 16px 0;font-size:22px;color:#E5E7EB;font-family:'JetBrains Mono',monospace;">
@@ -97,12 +81,34 @@ const sendContactEmail = async ({ name, email, projectType, message }) => {
   </div>
 `;
 
-    await transporter.sendMail({
-        from: studioAddress,
+    const payload = {
         to: studioAddress,
         subject: `New Project Enquiry — ${name}`,
         html: internalHtml,
-    });
+    };
+
+    if (fromAddress) {
+        payload.from = fromAddress;
+    }
+
+    try {
+        const response = await axios.post(PROMAILER_API_URL, payload, {
+            headers: {
+                Authorization: `Bearer ${apiKey}`,
+                'Content-Type': 'application/json',
+            },
+            timeout: 10000,
+        });
+
+        if (!response.data?.success) {
+            console.warn(
+                '⚠️  Promailer responded with non-success:',
+                response.data
+            );
+        }
+    } catch (error) {
+        console.error('Email sending failed (Promailer):', error.message);
+    }
 };
 
 module.exports = { sendContactEmail, isEmailReady: () => emailReady };
