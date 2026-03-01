@@ -1,14 +1,14 @@
-// server.js — Main entry point for the Express backend. Sets up middleware, routes, and database connection.
+// server.js — Main entry point for the Express backend. Connects to MongoDB and handles email-based contact form.
+
+// Load environment variables FIRST (before any other imports that depend on them)
+const dotenv = require('dotenv');
+dotenv.config();
 
 const express = require('express');
 const cors = require('cors');
-const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const contactRoutes = require('./routes/contactRoutes');
 const errorHandler = require('./middleware/errorHandler');
-
-// Load environment variables
-dotenv.config();
 
 // Connect to MongoDB
 connectDB();

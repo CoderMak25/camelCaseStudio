@@ -1,10 +1,25 @@
 // Work.jsx — Selected work / portfolio section with two project cards and abstract mockup UIs.
 
+import SplitText from './SplitText'
+
 function Work() {
     return (
         <section id="work" className="py-32">
             <div className="mb-20 flex justify-between items-end">
-                <h2 className="text-4xl md:text-6xl font-medium tracking-tighter text-main">Selected Work</h2>
+                <SplitText
+                    text="Selected Work"
+                    className="font-mono text-4xl md:text-6xl font-medium tracking-tight text-main"
+                    delay={30}
+                    duration={0.8}
+                    ease="power3.out"
+                    splitType="chars"
+                    from={{ opacity: 0, y: 40 }}
+                    to={{ opacity: 1, y: 0 }}
+                    threshold={0.1}
+                    rootMargin="-50px"
+                    textAlign="left"
+                    tag="h2"
+                />
                 <a href="#" className="hidden md:inline-flex font-mono text-xs uppercase tracking-widest text-white/40 hover:text-main transition-colors pb-2 border-b border-white/10 hover:border-white/40">
                     View Archive
                 </a>

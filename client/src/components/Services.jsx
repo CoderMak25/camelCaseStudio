@@ -1,6 +1,7 @@
 // Services.jsx — "Our Expertise" section using the FlowingMenu component from React Bits.
 
 import FlowingMenu from './FlowingMenu'
+import SplitText from './SplitText'
 
 const expertiseItems = [
     { link: '#', text: 'Business Websites', image: '/images/business-websites.jpg' },
@@ -12,7 +13,20 @@ function Services() {
     return (
         <section className="py-32 border-b border-white/[0.05]">
             <div className="mb-20">
-                <h2 className="font-mono text-2xl md:text-4xl uppercase tracking-widest text-white/40">Our Expertise</h2>
+                <SplitText
+                    text="Our Expertise"
+                    className="font-mono text-4xl md:text-6xl font-medium tracking-tight text-main"
+                    delay={30}
+                    duration={0.8}
+                    ease="power3.out"
+                    splitType="chars"
+                    from={{ opacity: 0, y: 40 }}
+                    to={{ opacity: 1, y: 0 }}
+                    threshold={0.1}
+                    rootMargin="-50px"
+                    textAlign="left"
+                    tag="h2"
+                />
             </div>
 
             <div style={{ height: '600px', position: 'relative' }}>
@@ -21,7 +35,7 @@ function Services() {
                     speed={15}
                     textColor="#F0F0F0"
                     bgColor="#0A0A0F"
-                    marqueeBgColor="#F0F0F0"
+                    marqueeBgColor="#999999"
                     marqueeTextColor="#0A0A0F"
                     borderColor="rgba(255,255,255,0.1)"
                 />

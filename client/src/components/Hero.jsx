@@ -12,7 +12,7 @@ function Hero() {
                         Web Design &amp; Development Studio, India
                     </div>
 
-                    <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-medium tracking-tighter leading-[0.9] text-main">
+                    <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-normal tracking-tighter leading-[0.9] text-main" style={{ fontFamily: "'Archivo Black', sans-serif" }}>
                         <span className="block mb-2">We build websites</span>
                         <span className="block mb-2 text-white/60">that mean</span>
                         <span className="block text-accent">business.</span>
