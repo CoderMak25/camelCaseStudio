@@ -31,6 +31,25 @@ app.get('/api/health', (req, res) => {
     res.status(200).json({ status: 'ok', message: 'Server is running' });
 });
 
+// Lightweight cron endpoint (for external schedulers like cron-job.org)
+// Hit this every 10 minutes; add real work inside if needed.
+app.get('/api/cron/ping', async (req, res) => {
+    try {
+        // Optional simple auth using a shared secret
+        if (process.env.CRON_SECRET && req.query.token !== process.env.CRON_SECRET) {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+
+        // TODO: place any recurring backend work here (cleanup, metrics, etc.)
+        // For now it's just a warm-up / health hit.
+
+        res.status(200).json({ status: 'ok' });
+    } catch (err) {
+        console.error('Cron ping error:', err);
+        res.status(500).json({ message: 'Cron failed' });
+    }
+});
+
 // Error handling middleware (must be after routes)
 app.use(errorHandler);
 
