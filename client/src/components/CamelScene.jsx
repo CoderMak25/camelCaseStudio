@@ -212,7 +212,8 @@ function CamelScene() {
         const clickMouse = new THREE.Vector2()
 
         const onCanvasClick = (e) => {
-            if (!camelModel || isHit) return
+            // Only allow hit when camel is fully standing and not already in a hit animation
+            if (!camelModel || isHit || sitState !== 'standing') return
             const rect = renderer.domElement.getBoundingClientRect()
             clickMouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1
             clickMouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1
@@ -440,11 +441,6 @@ function CamelScene() {
                         if (backRightLeg) backRightLeg.rotation.x = -kick * 0.15
                         camelModel.rotation.x = -kick * 0.2
                     }
-                } else if (isHit && sitState !== 'standing') {
-                    // If hit while sitting, stand up first
-                    isHit = false
-                    sitState = 'standing_up'
-                    sitAnimStart = elapsed
                 }
             }
 
@@ -495,7 +491,7 @@ function CamelScene() {
     return (
         <div
             ref={containerRef}
-            className="w-full h-full hidden lg:block"
+            className="w-full h-full"
         />
     )
 }

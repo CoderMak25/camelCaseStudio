@@ -4,8 +4,8 @@ import SplitText from './SplitText'
 
 function About() {
     return (
-        <section id="about" className="py-40 border-t border-white/[0.05]">
-            <div className="mb-16">
+        <section id="about" className="py-20 md:py-40 border-t border-white/[0.05]">
+            <div className="mb-10 md:mb-16">
                 <SplitText
                     text="The Story"
                     className="font-mono text-4xl md:text-6xl font-medium tracking-tight text-main"
@@ -22,7 +22,7 @@ function About() {
                 />
             </div>
             <div className="max-w-4xl">
-                <p className="text-3xl md:text-5xl lg:text-6xl leading-[1.2] md:leading-[1.1] font-medium tracking-tighter text-white/60">
+                <p className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl leading-[1.2] md:leading-[1.1] font-medium tracking-tighter text-white/60">
                     We&apos;re <span className="text-main">Mayank, Ashitosh and Kaushik</span>. Three developers who got tired of watching small businesses get overcharged for bad websites. So we started camelCase Studio.
                 </p>
             </div>

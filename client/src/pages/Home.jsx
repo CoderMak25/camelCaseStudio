@@ -1,6 +1,4 @@
-// Home.jsx — Main landing page that composes all section components in order.
-// The first fold (Navbar + Hero + Marquee) is wrapped in a h-screen flex container
-// so it always fills exactly one viewport height on any screen size.
+// Home.jsx — Main landing page. First fold flows naturally (no fixed viewport).
 
 import Navbar from '../components/Navbar'
 import Hero from '../components/Hero'
@@ -14,12 +12,14 @@ import Footer from '../components/Footer'
 
 function Home() {
     return (
-        <div className="max-w-[1600px] mx-auto px-4 md:px-12 relative border-x border-white/[0.02]">
-            {/* First fold — fills exactly one viewport */}
-            <div className="h-screen flex flex-col">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 md:px-12 relative border-x border-white/[0.02]">
+            {/* First fold: natural height — navbar, hero, gap, marquee */}
+            <div className="flex flex-col pt-[env(safe-area-inset-top)]">
                 <Navbar />
                 <Hero />
-                <Marquee />
+                <div className="mt-6 md:mt-8 lg:mt-10">
+                    <Marquee />
+                </div>
             </div>
 
             {/* Rest of the page */}

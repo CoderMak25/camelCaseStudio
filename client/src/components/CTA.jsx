@@ -5,6 +5,8 @@ import { useState } from 'react'
 import axios from 'axios'
 import SplitText from './SplitText'
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
+
 function CTA() {
     const [formData, setFormData] = useState({
         name: '',
@@ -75,7 +77,8 @@ function CTA() {
 
         setLoading(true)
         try {
-            const res = await axios.post('/api/contact', formData)
+            const url = `${API_BASE_URL}/api/contact`
+            const res = await axios.post(url, formData)
             setStatus({
                 type: 'success',
                 message: res.data.message || "We got your message! We'll reach out within 24 hours. 🙌",
@@ -102,12 +105,12 @@ function CTA() {
         }`
 
     return (
-        <section id="contact" className="py-32 md:py-48 border-t border-white/[0.05]">
+        <section id="contact" className="py-20 md:py-32 lg:py-48 border-t border-white/[0.05]">
             <div className="flex flex-col items-start">
-                <div className="mb-8">
+                <div className="mb-6 md:mb-8">
                     <SplitText
                         text="Got a project?"
-                        className="font-mono text-6xl md:text-[8rem] lg:text-[10rem] font-medium tracking-tighter leading-none text-main"
+                        className="font-mono text-4xl sm:text-5xl md:text-6xl lg:text-[8rem] xl:text-[10rem] font-medium tracking-tighter leading-none text-main"
                         delay={30}
                         duration={0.8}
                         ease="power3.out"
@@ -120,12 +123,12 @@ function CTA() {
                         tag="h2"
                     />
                 </div>
-                <p className="text-xl md:text-3xl text-white/40 mb-16 tracking-tight font-light">
+                <p className="text-lg sm:text-xl md:text-3xl text-white/40 mb-10 md:mb-16 tracking-tight font-light">
                     Let&apos;s talk. It&apos;s free.
                 </p>
 
                 {/* Contact Form */}
-                <form onSubmit={handleSubmit} className="w-full max-w-2xl flex flex-col gap-6" noValidate>
+                <form onSubmit={handleSubmit} className="w-full max-w-2xl flex flex-col gap-4 md:gap-6" noValidate>
                     {/* Name */}
                     <div className="flex flex-col gap-2">
                         <label htmlFor="name" className="font-mono text-xs uppercase tracking-widest text-white/40">

@@ -23,8 +23,8 @@ const steps = [
 
 function HowItWorks() {
     return (
-        <section className="py-32 border-b border-white/[0.05]">
-            <div className="mb-20">
+        <section className="py-16 md:py-32 border-b border-white/[0.05]">
+            <div className="mb-12 md:mb-20">
                 <SplitText
                     text="Our Workflow"
                     className="font-mono text-4xl md:text-6xl font-medium tracking-tight text-main"

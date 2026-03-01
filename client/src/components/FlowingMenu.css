@@ -38,6 +38,14 @@
   font-size: 4vh;
 }
 
+@media (max-width: 768px) {
+  .menu__item-link {
+    font-size: clamp(1rem, 3.5vw + 0.5rem, 4vh);
+    padding: 0.5rem;
+    min-height: 60px;
+  }
+}
+
 .menu__item-link:hover {
   color: inherit;
 }
@@ -86,6 +94,19 @@
   font-size: 4vh;
   line-height: 1;
   padding: 0 1vw;
+}
+
+@media (max-width: 768px) {
+  .marquee span {
+    font-size: clamp(0.875rem, 3vw + 0.5rem, 4vh);
+    padding: 0 2vw;
+  }
+
+  .marquee__img {
+    width: 120px;
+    height: 7vh;
+    margin: 0 3vw;
+  }
 }
 
 .marquee__img {

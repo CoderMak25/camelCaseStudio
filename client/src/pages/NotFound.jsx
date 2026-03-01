@@ -10,12 +10,12 @@ function NotFound() {
                 Error 404
             </div>
 
-            <h1 className="text-6xl md:text-8xl lg:text-[10rem] font-medium tracking-tighter leading-[0.9] text-main mb-8">
+            <h1 className="text-4xl sm:text-6xl md:text-8xl lg:text-[10rem] font-medium tracking-tighter leading-[0.9] text-main mb-6 md:mb-8">
                 <span className="block mb-2">Page not</span>
                 <span className="block text-accent">found.</span>
             </h1>
 
-            <p className="text-xl md:text-2xl text-white/40 mb-16 tracking-tight font-light max-w-xl">
+            <p className="text-base sm:text-xl md:text-2xl text-white/40 mb-10 md:mb-16 tracking-tight font-light max-w-xl">
                 Looks like this page doesn&apos;t exist. Maybe the URL is wrong, or the page was moved.
             </p>
 

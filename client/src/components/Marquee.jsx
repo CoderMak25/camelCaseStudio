@@ -1,30 +1,23 @@
-// Marquee.jsx — Infinite scrolling marquee strip showing tech stack keywords.
-// Uses two identical content blocks side-by-side so translateX(-50%) creates a seamless loop.
+// Marquee.jsx — Infinite scrolling marquee. Two identical blocks + -50% loop for seamless infinite scroll.
 
 function Marquee() {
     const items = ['HTML', 'CSS', 'React', 'Next.js', 'Figma', 'Webflow', 'JavaScript', 'Node.js']
 
-    const renderItems = () =>
+    const renderCopy = (copyKey) =>
         items.map((item, index) => (
-            <span key={index}>
-                <span className="mx-4">{item}</span>
-                <span className="mx-4">·</span>
+            <span key={`${copyKey}-${index}`} className="mx-3 sm:mx-4 whitespace-nowrap">
+                {item}
+                <span className="mx-1 sm:mx-2 opacity-50">·</span>
             </span>
         ))
 
     return (
-        <div className="border-y border-white/[0.05] overflow-hidden py-4 bg-base relative flex">
-            {/* Fade edges */}
-            <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-base to-transparent z-10"></div>
-            <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-base to-transparent z-10"></div>
-
-            <div
-                className="animate-marquee whitespace-nowrap font-mono text-xs uppercase tracking-widest text-white/20 inline-flex"
-            >
-                {/* First copy */}
-                {renderItems()}
-                {/* Duplicate for seamless loop */}
-                {renderItems()}
+        <div className="border-y border-white/[0.08] overflow-hidden py-2.5 sm:py-3 bg-base relative flex flex-shrink-0 items-center min-h-[40px]">
+            <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-24 md:w-32 bg-gradient-to-r from-base to-transparent z-10 pointer-events-none" aria-hidden />
+            <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-24 md:w-32 bg-gradient-to-l from-base to-transparent z-10 pointer-events-none" aria-hidden />
+            <div className="animate-marquee font-mono text-[11px] sm:text-xs uppercase tracking-widest text-white/30 inline-flex items-center gap-0 flex-nowrap">
+                {renderCopy('a')}
+                {renderCopy('b')}
             </div>
         </div>
     )

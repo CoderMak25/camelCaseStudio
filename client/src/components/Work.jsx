@@ -1,6 +1,6 @@
 // Work.jsx — Selected work section with row-based layout and cursor-following hover image reveal.
 
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import SplitText from './SplitText'
 
 const projects = [
@@ -22,12 +22,39 @@ function Work() {
     const [archiveClicked, setArchiveClicked] = useState(false)
     const [activeRow, setActiveRow] = useState(null)
     const imgRefs = useRef([])
+    const rafRef = useRef(null)
+    const posRef = useRef({ x: 0, y: 0 })
 
     const handleMouseMove = useCallback((e, index) => {
-        const img = imgRefs.current[index]
-        if (img) {
-            img.style.top = e.clientY + 'px'
-            img.style.left = (e.clientX + 20) + 'px'
+        if (activeRow !== index) return
+        posRef.current.x = e.clientX
+        posRef.current.y = e.clientY
+        if (rafRef.current != null) return
+        rafRef.current = requestAnimationFrame(() => {
+            rafRef.current = null
+            const { x, y } = posRef.current
+            const img = imgRefs.current[index]
+            if (img) {
+                img.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`
+            }
+        })
+    }, [activeRow])
+
+    useEffect(() => {
+        return () => {
+            if (rafRef.current) cancelAnimationFrame(rafRef.current)
+        }
+    }, [])
+
+    const handleMouseEnter = useCallback((index, e) => {
+        setActiveRow(index)
+        if (e) {
+            posRef.current.x = e.clientX
+            posRef.current.y = e.clientY
+            const img = imgRefs.current[index]
+            if (img) {
+                img.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`
+            }
         }
     }, [])
 
@@ -36,8 +63,8 @@ function Work() {
     }, [])
 
     return (
-        <section id="work" className="py-32">
-            <div className="mb-20 flex justify-between items-end">
+        <section id="work" className="py-16 md:py-32">
+            <div className="mb-12 md:mb-20 flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
                 <SplitText
                     text="Selected Work"
                     className="font-mono text-4xl md:text-6xl font-medium tracking-tight text-main"
@@ -66,7 +93,7 @@ function Work() {
                         key={index}
                         className={`project-row ${activeRow === index ? 'is-active' : ''}`}
                         onMouseMove={(e) => handleMouseMove(e, index)}
-                        onMouseEnter={() => setActiveRow(index)}
+                        onMouseEnter={(e) => handleMouseEnter(index, e)}
                         onMouseLeave={() => setActiveRow(null)}
                         onClick={() => handleRowClick(project.link)}
                     >
@@ -79,15 +106,19 @@ function Work() {
 
                         <span className="project-row__category">{project.category}</span>
 
-                        {/* Hover image — always rendered, visibility toggled via CSS */}
+                        {/* Hover image — position via transform (GPU), visibility via class */}
                         <div
                             className="hover-img-reveal"
                             ref={(el) => (imgRefs.current[index] = el)}
                         >
-                            <img
-                                src={project.image}
-                                alt={`${project.title} Preview`}
-                            />
+                            <div className="hover-img-reveal__inner">
+                                <img
+                                    src={project.image}
+                                    alt={`${project.title} Preview`}
+                                    loading="lazy"
+                                    decoding="async"
+                                />
+                            </div>
                         </div>
                     </div>
                 ))}

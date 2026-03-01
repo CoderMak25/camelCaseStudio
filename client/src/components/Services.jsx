@@ -11,8 +11,8 @@ const expertiseItems = [
 
 function Services() {
     return (
-        <section className="py-32 border-b border-white/[0.05]">
-            <div className="mb-20">
+        <section className="pt-8 md:pt-20 pb-16 md:pb-32 border-b border-white/[0.05]">
+            <div className="mb-12 md:mb-20">
                 <SplitText
                     text="Our Expertise"
                     className="font-mono text-4xl md:text-6xl font-medium tracking-tight text-main"
@@ -29,7 +29,7 @@ function Services() {
                 />
             </div>
 
-            <div style={{ height: '600px', position: 'relative' }}>
+            <div className="h-[380px] sm:h-[480px] md:h-[600px] w-full" style={{ position: 'relative' }}>
                 <FlowingMenu
                     items={expertiseItems}
                     speed={15}
