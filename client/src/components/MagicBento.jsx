@@ -390,8 +390,8 @@ const GlobalSpotlight = ({
     return null;
 };
 
-const BentoCardGrid = ({ children, gridRef }) => (
-    <div className="card-grid bento-section" ref={gridRef}>
+const BentoCardGrid = ({ children, gridRef, gridClassName = '' }) => (
+    <div className={`card-grid bento-section ${gridClassName}`} ref={gridRef}>
         {children}
     </div>
 );
@@ -420,7 +420,8 @@ const MagicBento = ({
     enableTilt = false,
     glowColor = DEFAULT_GLOW_COLOR,
     clickEffect = true,
-    enableMagnetism = true
+    enableMagnetism = true,
+    gridClassName = ''
 }) => {
     const gridRef = useRef(null);
     const isMobile = useMobileDetection();
@@ -438,9 +439,10 @@ const MagicBento = ({
                 />
             )}
 
-            <BentoCardGrid gridRef={gridRef}>
+            <BentoCardGrid gridRef={gridRef} gridClassName={gridClassName}>
                 {cards.map((card, index) => {
-                    const baseClassName = `magic-bento-card ${enableBorderGlow ? 'magic-bento-card--border-glow' : ''}`;
+                    const isImageCard = !!card.image;
+                    const baseClassName = `magic-bento-card ${enableBorderGlow ? 'magic-bento-card--border-glow' : ''} ${isImageCard ? 'magic-bento-card--image' : ''}`;
                     const cardProps = {
                         className: baseClassName,
                         style: {
@@ -449,7 +451,27 @@ const MagicBento = ({
                         }
                     };
 
-                    return (
+                    const cardContent = isImageCard ? (
+                        <ParticleCard
+                            key={index}
+                            {...cardProps}
+                            disableAnimations={shouldDisableAnimations}
+                            particleCount={particleCount}
+                            glowColor={glowColor}
+                            enableTilt={enableTilt}
+                            clickEffect={clickEffect}
+                            enableMagnetism={enableMagnetism}
+                        >
+                            <img
+                                src={card.image}
+                                alt={card.title}
+                                className="magic-bento-card__image"
+                            />
+                            <div className="magic-bento-card__image-overlay">
+                                <h3 className="magic-bento-card__image-title">{card.title}</h3>
+                            </div>
+                        </ParticleCard>
+                    ) : (
                         <ParticleCard
                             key={index}
                             {...cardProps}
@@ -469,6 +491,22 @@ const MagicBento = ({
                             </div>
                         </ParticleCard>
                     );
+
+                    if (card.link) {
+                        return (
+                            <a
+                                key={index}
+                                href={card.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="magic-bento-card__link-wrapper"
+                            >
+                                {cardContent}
+                            </a>
+                        );
+                    }
+
+                    return cardContent;
                 })}
             </BentoCardGrid>
         </>

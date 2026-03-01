@@ -1,8 +1,40 @@
-// Work.jsx — Selected work / portfolio section with two project cards and abstract mockup UIs.
+// Work.jsx — Selected work section with row-based layout and cursor-following hover image reveal.
 
+import { useState, useRef, useCallback } from 'react'
 import SplitText from './SplitText'
 
+const projects = [
+    {
+        title: 'Dahiyo',
+        category: 'Restaurant / Branding',
+        image: '/images/Screenshot 2026-03-01 134617.png',
+        link: 'https://dahiyo-demo.vercel.app/#story',
+    },
+    {
+        title: 'Luxe Nails',
+        category: 'Salon / E-Commerce',
+        image: '/images/Screenshot 2026-03-01 135007.png',
+        link: 'https://samplenails.netlify.app/',
+    },
+]
+
 function Work() {
+    const [archiveClicked, setArchiveClicked] = useState(false)
+    const [activeRow, setActiveRow] = useState(null)
+    const imgRefs = useRef([])
+
+    const handleMouseMove = useCallback((e, index) => {
+        const img = imgRefs.current[index]
+        if (img) {
+            img.style.top = e.clientY + 'px'
+            img.style.left = (e.clientX + 20) + 'px'
+        }
+    }, [])
+
+    const handleRowClick = useCallback((link) => {
+        window.open(link, '_blank', 'noopener,noreferrer')
+    }, [])
+
     return (
         <section id="work" className="py-32">
             <div className="mb-20 flex justify-between items-end">
@@ -20,55 +52,45 @@ function Work() {
                     textAlign="left"
                     tag="h2"
                 />
-                <a href="#" className="hidden md:inline-flex font-mono text-xs uppercase tracking-widest text-white/40 hover:text-main transition-colors pb-2 border-b border-white/10 hover:border-white/40">
-                    View Archive
-                </a>
+                <button
+                    onClick={() => setArchiveClicked(true)}
+                    className="hidden md:inline-flex font-mono text-xs uppercase tracking-widest text-white/40 hover:text-main transition-colors pb-2 border-b border-white/10 hover:border-white/40 bg-transparent cursor-pointer"
+                >
+                    {archiveClicked ? 'Coming Soon' : 'View Archive'}
+                </button>
             </div>
 
-            <div className="flex flex-col md:flex-row gap-8 md:gap-12">
-                {/* Project 01 (Larger, Left) */}
-                <div className="w-full md:w-7/12 group cursor-pointer">
-                    <div className="aspect-[16/10] bg-[#0F0F14] border border-white/[0.05] rounded-sm mb-6 overflow-hidden relative p-4 flex flex-col transition-colors group-hover:border-white/[0.15]">
-                        {/* Abstract Mockup UI */}
-                        <div className="w-full h-8 border-b border-white/[0.05] flex items-center mb-4 gap-2">
-                            <div className="w-2 h-2 rounded-sm bg-white/10"></div>
-                            <div className="w-2 h-2 rounded-sm bg-white/10"></div>
+            <div className="work-rows">
+                {projects.map((project, index) => (
+                    <div
+                        key={index}
+                        className={`project-row ${activeRow === index ? 'is-active' : ''}`}
+                        onMouseMove={(e) => handleMouseMove(e, index)}
+                        onMouseEnter={() => setActiveRow(index)}
+                        onMouseLeave={() => setActiveRow(null)}
+                        onClick={() => handleRowClick(project.link)}
+                    >
+                        <div className="project-row__left">
+                            <span className="project-row__number">
+                                {String(index + 1).padStart(2, '0')}
+                            </span>
+                            <h3 className="project-row__title">{project.title}</h3>
                         </div>
-                        <div className="flex-1 border border-white/[0.03] bg-white/[0.01] rounded-sm p-6">
-                            <div className="w-1/3 h-6 bg-white/[0.05] mb-4 rounded-sm"></div>
-                            <div className="w-full h-px bg-white/[0.03] mb-4"></div>
-                            <div className="grid grid-cols-3 gap-4">
-                                <div className="h-20 bg-white/[0.02] border border-white/[0.03] rounded-sm"></div>
-                                <div className="col-span-2 h-20 bg-white/[0.02] border border-white/[0.03] rounded-sm"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="flex justify-between items-start">
-                        <h3 className="text-2xl font-medium tracking-tight text-main">Fintech Dashboard</h3>
-                        <div className="flex gap-2">
-                            <span className="text-[10px] font-mono text-white/40 border border-white/10 px-2 py-1 rounded-sm">Next.js</span>
-                            <span className="text-[10px] font-mono text-white/40 border border-white/10 px-2 py-1 rounded-sm">Tailwind</span>
-                        </div>
-                    </div>
-                </div>
 
-                {/* Project 02 (Smaller, Offset Down) */}
-                <div className="w-full md:w-5/12 md:mt-32 group cursor-pointer">
-                    <div className="aspect-[4/3] bg-[#0F0F14] border border-white/[0.05] rounded-sm mb-6 overflow-hidden relative p-4 flex flex-col transition-colors group-hover:border-white/[0.15]">
-                        {/* Abstract Mockup UI */}
-                        <div className="flex-1 border border-white/[0.03] bg-white/[0.01] rounded-sm flex flex-col justify-end p-4">
-                            <div className="w-full h-32 bg-white/[0.02] border border-white/[0.03] mb-4 rounded-sm"></div>
-                            <div className="w-1/2 h-4 bg-white/[0.05] rounded-sm"></div>
+                        <span className="project-row__category">{project.category}</span>
+
+                        {/* Hover image — always rendered, visibility toggled via CSS */}
+                        <div
+                            className="hover-img-reveal"
+                            ref={(el) => (imgRefs.current[index] = el)}
+                        >
+                            <img
+                                src={project.image}
+                                alt={`${project.title} Preview`}
+                            />
                         </div>
                     </div>
-                    <div className="flex justify-between items-start">
-                        <h3 className="text-2xl font-medium tracking-tight text-main">Studio Platform</h3>
-                        <div className="flex gap-2">
-                            <span className="text-[10px] font-mono text-white/40 border border-white/10 px-2 py-1 rounded-sm">React</span>
-                            <span className="text-[10px] font-mono text-white/40 border border-white/10 px-2 py-1 rounded-sm">Stripe</span>
-                        </div>
-                    </div>
-                </div>
+                ))}
             </div>
         </section>
     )
