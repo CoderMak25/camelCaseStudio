@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Block API and internal routes from being indexed
+Disallow: /api/
+
+Sitemap: https://camel-case-studio.vercel.app/sitemap.xml
+
