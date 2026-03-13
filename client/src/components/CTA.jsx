@@ -3,9 +3,13 @@
 
 import { useState } from 'react'
 import axios from 'axios'
+import emailjs from '@emailjs/browser'
 import SplitText from './SplitText'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
+const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID
+const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID
+const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY
 
 function CTA() {
     const [formData, setFormData] = useState({
@@ -79,6 +83,27 @@ function CTA() {
         try {
             const url = `${API_BASE_URL}/api/contact`
             const res = await axios.post(url, formData)
+
+            // Fire-and-forget email via EmailJS (frontend only)
+            if (EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID && EMAILJS_PUBLIC_KEY) {
+                try {
+                    await emailjs.send(
+                        EMAILJS_SERVICE_ID,
+                        EMAILJS_TEMPLATE_ID,
+                        {
+                            name: formData.name,
+                            email: formData.email,
+                            projectType: formData.projectType,
+                            message: formData.message,
+                        },
+                        EMAILJS_PUBLIC_KEY
+                    )
+                } catch (emailErr) {
+                    console.error('EmailJS error:', emailErr)
+                    // Do not change the user-facing success state if email fails
+                }
+            }
+
             setStatus({
                 type: 'success',
                 message: res.data.message || "We got your message! We'll reach out within 24 hours. 🙌",

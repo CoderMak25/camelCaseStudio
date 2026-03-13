@@ -2,7 +2,6 @@
 // Includes thorough server-side validation and input sanitization.
 
 const Contact = require('../models/Contact');
-const { sendContactEmail, isEmailReady } = require('../config/mailer');
 
 // Allowed project types (whitelist)
 const VALID_PROJECT_TYPES = ['Business Website', 'Landing Page', 'Maintenance'];
@@ -75,22 +74,10 @@ const submitContact = async (req, res, next) => {
             projectType = 'Business Website'; // fallback to default
         }
 
-        // --- Save to MongoDB ---
-        const contact = await Contact.create({
-            name,
-            email,
-            projectType,
-            message,
-        });
+        const payload = { name, email, projectType, message };
 
-        // --- Send email notification (non-blocking) ---
-        if (isEmailReady()) {
-            try {
-                await sendContactEmail({ name, email, projectType, message });
-            } catch (emailError) {
-                console.error('Email sending failed:', emailError.message);
-            }
-        }
+        // --- Save to MongoDB ---
+        const contact = await Contact.create(payload);
 
         res.status(201).json({
             success: true,
