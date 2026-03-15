@@ -53,11 +53,18 @@
 }
 
 /* Subpixel Antialiasing for sharp text */
+html {
+  background-color: #0A0A0F;
+}
+
 body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
+  background-color: #0A0A0F;
+  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 /* Prevent browser autofill from painting inputs white */

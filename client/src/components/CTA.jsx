@@ -1,7 +1,7 @@
-// CTA.jsx — Contact/enquiry section with a controlled form. Submits to the backend API via axios.
-// Includes per-field client-side validation, inline error messages, loading state, and form reset on success.
+// CTA.jsx — Contact/enquiry section with UNCONTROLLED inputs for zero-lag typing on mobile.
+// Validation happens only on blur and submit. Form data is read from refs, not state.
 
-import { useState } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import axios from 'axios'
 import emailjs from '@emailjs/browser'
 import SplitText from './SplitText'
@@ -12,18 +12,19 @@ const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID
 const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY
 
 function CTA() {
-    const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        projectType: 'Business Website',
-        message: '',
-    })
+    // Refs for uncontrolled inputs (no re-renders on every keystroke)
+    const nameRef = useRef(null)
+    const emailRef = useRef(null)
+    const projectTypeRef = useRef(null)
+    const messageRef = useRef(null)
+    const formRef = useRef(null)
+
     const [errors, setErrors] = useState({})
     const [touched, setTouched] = useState({})
     const [status, setStatus] = useState({ type: '', message: '' })
     const [loading, setLoading] = useState(false)
+    const [msgLen, setMsgLen] = useState(0)
 
-    // Validate a single field
     const validateField = (name, value) => {
         switch (name) {
             case 'name':
@@ -45,28 +46,35 @@ function CTA() {
         }
     }
 
-    // Validate all fields
+    const getFormData = () => ({
+        name: nameRef.current?.value || '',
+        email: emailRef.current?.value || '',
+        projectType: projectTypeRef.current?.value || 'Business Website',
+        message: messageRef.current?.value || '',
+    })
+
     const validateForm = () => {
+        const data = getFormData()
         const newErrors = {
-            name: validateField('name', formData.name),
-            email: validateField('email', formData.email),
-            message: validateField('message', formData.message),
+            name: validateField('name', data.name),
+            email: validateField('email', data.email),
+            message: validateField('message', data.message),
         }
         setErrors(newErrors)
         setTouched({ name: true, email: true, message: true })
         return !newErrors.name && !newErrors.email && !newErrors.message
     }
 
-    const handleChange = (e) => {
-        const { name, value } = e.target
-        setFormData((prev) => ({ ...prev, [name]: value }))
-    }
-
-    const handleBlur = (e) => {
+    const handleBlur = useCallback((e) => {
         const { name, value } = e.target
         setTouched((prev) => ({ ...prev, [name]: true }))
         setErrors((prev) => ({ ...prev, [name]: validateField(name, value) }))
-    }
+    }, [])
+
+    // Only track message length for the counter (cheap update)
+    const handleMessageInput = useCallback(() => {
+        setMsgLen(messageRef.current?.value.length || 0)
+    }, [])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -74,28 +82,22 @@ function CTA() {
 
         if (!validateForm()) return
 
+        const formData = getFormData()
         setLoading(true)
         try {
             const url = `${API_BASE_URL}/api/contact`
             const res = await axios.post(url, formData)
 
-            // Fire-and-forget email via EmailJS (frontend only)
             if (EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID && EMAILJS_PUBLIC_KEY) {
                 try {
                     await emailjs.send(
                         EMAILJS_SERVICE_ID,
                         EMAILJS_TEMPLATE_ID,
-                        {
-                            name: formData.name,
-                            email: formData.email,
-                            projectType: formData.projectType,
-                            message: formData.message,
-                        },
+                        formData,
                         EMAILJS_PUBLIC_KEY
                     )
                 } catch (emailErr) {
                     console.error('EmailJS error:', emailErr)
-                    // Do not change the user-facing success state if email fails
                 }
             }
 
@@ -103,7 +105,9 @@ function CTA() {
                 type: 'success',
                 message: res.data.message || "We got your message! We'll reach out within 24 hours. 🙌",
             })
-            setFormData({ name: '', email: '', projectType: 'Business Website', message: '' })
+            // Reset uncontrolled form
+            formRef.current?.reset()
+            setMsgLen(0)
             setErrors({})
             setTouched({})
         } catch (err) {
@@ -117,7 +121,6 @@ function CTA() {
         }
     }
 
-    // Helper for input border color
     const inputClass = (field) =>
         `bg-transparent border rounded-sm px-4 py-3 text-main placeholder:text-white/20 focus:outline-none transition-colors font-light ${touched[field] && errors[field]
             ? 'border-red-400/60 focus:border-red-400'
@@ -147,19 +150,19 @@ function CTA() {
                     Let&apos;s talk. It&apos;s free.
                 </p>
 
-                {/* Contact Form */}
-                <form onSubmit={handleSubmit} className="w-full max-w-2xl flex flex-col gap-4 md:gap-6" noValidate>
+                {/* Contact Form — uncontrolled for zero-lag mobile typing */}
+                <form ref={formRef} onSubmit={handleSubmit} className="w-full max-w-2xl flex flex-col gap-4 md:gap-6" noValidate>
                     {/* Name */}
                     <div className="flex flex-col gap-2">
                         <label htmlFor="name" className="font-mono text-xs uppercase tracking-widest text-white/40">
                             Name *
                         </label>
                         <input
+                            ref={nameRef}
                             type="text"
                             id="name"
                             name="name"
-                            value={formData.name}
-                            onChange={handleChange}
+                            defaultValue=""
                             onBlur={handleBlur}
                             placeholder="Your name"
                             maxLength={100}
@@ -177,11 +180,11 @@ function CTA() {
                             Email *
                         </label>
                         <input
+                            ref={emailRef}
                             type="email"
                             id="email"
                             name="email"
-                            value={formData.email}
-                            onChange={handleChange}
+                            defaultValue=""
                             onBlur={handleBlur}
                             placeholder="you@example.com"
                             autoComplete="off"
@@ -198,10 +201,10 @@ function CTA() {
                             Project Type
                         </label>
                         <select
+                            ref={projectTypeRef}
                             id="projectType"
                             name="projectType"
-                            value={formData.projectType}
-                            onChange={handleChange}
+                            defaultValue="Business Website"
                             className="bg-base border border-white/[0.08] rounded-sm px-4 py-3 text-main focus:outline-none focus:border-accent transition-colors font-light appearance-none cursor-pointer"
                         >
                             <option value="Business Website">Business Website</option>
@@ -217,15 +220,16 @@ function CTA() {
                                 Message *
                             </label>
                             <span className="font-mono text-[10px] text-white/20">
-                                {formData.message.length}/2000
+                                {msgLen}/2000
                             </span>
                         </div>
                         <textarea
+                            ref={messageRef}
                             id="message"
                             name="message"
-                            value={formData.message}
-                            onChange={handleChange}
+                            defaultValue=""
                             onBlur={handleBlur}
+                            onInput={handleMessageInput}
                             placeholder="Tell us about your project..."
                             rows="5"
                             maxLength={2000}
