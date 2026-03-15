@@ -297,6 +297,9 @@ function CamelScene() {
                 // Attach hover listeners to the canvas
                 renderer.domElement.addEventListener('mouseenter', onCanvasEnter)
                 renderer.domElement.addEventListener('mouseleave', onCanvasLeave)
+
+                // Signal that the 3D model is ready (used by Loader)
+                window.dispatchEvent(new Event('camel-loaded'))
             },
             undefined,
             (error) => {

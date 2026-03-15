@@ -60,11 +60,6 @@ function CTA() {
     const handleChange = (e) => {
         const { name, value } = e.target
         setFormData((prev) => ({ ...prev, [name]: value }))
-
-        // Live validation for touched fields
-        if (touched[name]) {
-            setErrors((prev) => ({ ...prev, [name]: validateField(name, value) }))
-        }
     }
 
     const handleBlur = (e) => {
@@ -168,6 +163,7 @@ function CTA() {
                             onBlur={handleBlur}
                             placeholder="Your name"
                             maxLength={100}
+                            autoComplete="off"
                             className={inputClass('name')}
                         />
                         {touched.name && errors.name && (
@@ -188,6 +184,7 @@ function CTA() {
                             onChange={handleChange}
                             onBlur={handleBlur}
                             placeholder="you@example.com"
+                            autoComplete="off"
                             className={inputClass('email')}
                         />
                         {touched.email && errors.email && (
